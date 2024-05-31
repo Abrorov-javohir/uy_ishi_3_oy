@@ -35,6 +35,15 @@ class _ContactItemState extends State<ContactItem> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
+            onPressed: () {
+              widget.onEdit();
+            },
+            icon: const Icon(
+              Icons.edit,
+              color: Colors.blue,
+            ),
+          ),
+          IconButton(
             onPressed: CheckTick,
             icon: Icon(
               isTicked ? Icons.check_box : Icons.check_box_outline_blank,

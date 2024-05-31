@@ -28,7 +28,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
       },
     );
 
-    if (data != null) {
+    if (data != null && data['name'] != null && data['task'] != null) {
       contactsController.edit(
         index: index,
         name: data['name'],
@@ -38,45 +38,42 @@ class _ContactsScreenState extends State<ContactsScreen> {
     }
   }
 
+  void onAdd() async {
+    Map<String, dynamic>? data = await showDialog(
+      context: context,
+      builder: (ctx) {
+        return ContactAddDialog();
+      },
+    );
+
+    if (data != null && data['name'] != null && data['task'] != null) {
+      contactsController.add(data['name'], data['task']);
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        title: const Text("Contacts"),
+        title: Text('Contacts'),
         actions: [
           IconButton(
-            onPressed: () async {
-              Map<String, dynamic>? data = await showDialog(
-                context: context,
-                builder: (ctx) {
-                  return const ContactAddDialog();
-                },
-              );
-
-              if (data != null) {
-                contactsController.add(
-                  data['name'],
-                  data['task'],
-                );
-                setState(() {});
-              }
-            },
-            icon: const Icon(Icons.add),
+            icon: Icon(Icons.add),
+            onPressed: onAdd,
           ),
         ],
       ),
       body: ListView.builder(
         itemCount: contactsController.list.length,
         itemBuilder: (ctx, index) {
+          final contact = contactsController.list[index];
           return ContactItem(
-              contact: contactsController.list[index],
-              onDelete: () {
-                onDelete(index);
-              },
-              onEdit: () {
-                onEdit(contactsController.list[index], index);
-              });
+            contact: contact,
+            onDelete: () => onDelete(index),
+            onEdit: () => onEdit(contact, index),
+          );
         },
       ),
     );

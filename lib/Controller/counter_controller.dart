@@ -1,7 +1,7 @@
 import 'package:uy_ishi_3_oy/model/task2.dart';
 
 class CounterController {
-  Counter _counter = Counter(0);
+  final Counter _counter = Counter(0);
 
   int get value {
     return _counter.value;
