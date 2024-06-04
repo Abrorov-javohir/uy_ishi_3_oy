@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uy_ishi_3_oy/Controller/Task_Controller.dart';
 import 'package:uy_ishi_3_oy/model/Task.dart';
+import 'package:uy_ishi_3_oy/views/screens/statistic_screen.dart';
 import 'package:uy_ishi_3_oy/views/screens/widgets/ListItem.dart';
 import 'package:uy_ishi_3_oy/views/screens/widgets/List_Add.dart';
-import 'package:uy_ishi_3_oy/views/screens/widgets/task_edit.dart';
 
 class ContactsScreen extends StatefulWidget {
   const ContactsScreen({super.key});
@@ -33,6 +33,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
         index: index,
         name: data['name'],
         task: data['task'],
+        completed: data['completed'],
+        reminder: data['reminder'],
       );
       setState(() {});
     }
@@ -47,9 +49,20 @@ class _ContactsScreenState extends State<ContactsScreen> {
     );
 
     if (data != null && data['name'] != null && data['task'] != null) {
-      contactsController.add(data['name'], data['task']);
+      contactsController.add(
+          data['name'], data['task'], data['completed'], data['reminder']);
       setState(() {});
     }
+  }
+
+  void onViewStatistics() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            StatisticsScreen(contactsController: contactsController),
+      ),
+    );
   }
 
   @override
@@ -57,15 +70,21 @@ class _ContactsScreenState extends State<ContactsScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.amber,
-        title: Text('Contacts'),
+        title: const Text('Contacts'),
         actions: [
           IconButton(
-            icon: Icon(Icons.add),
+            icon: const Icon(Icons.add),
             onPressed: onAdd,
           ),
         ],
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Adjust the number of columns
+          childAspectRatio: 3 / 2, // Adjust the aspect ratio as needed
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
         itemCount: contactsController.list.length,
         itemBuilder: (ctx, index) {
           final contact = contactsController.list[index];
@@ -75,6 +94,36 @@ class _ContactsScreenState extends State<ContactsScreen> {
             onEdit: () => onEdit(contact, index),
           );
         },
+      ),
+      bottomNavigationBar: BottomAppBar(
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6.0,
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            IconButton(
+              icon: const Icon(Icons.home),
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatisticsScreen(
+                        contactsController: contactsController),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.person),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
